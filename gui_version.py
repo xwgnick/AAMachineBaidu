@@ -128,16 +128,22 @@ def add():
 def sycup():
     bp=ByPy()
     bp.upload("qa_dict_auto_final.json")
+    top_syc = Toplevel()
+    label0 = Label(top_syc, text = "同步完成！").grid(row = 0, column = 0)
+    btnQuirSyc = Button(top_syc, text="关闭", command=top_syc.destroy).grid(row=1, column=0)
 
 def sycdown():
     bp=ByPy()
     bp.download("qa_dict_auto_final.json")
+    top_syc = Toplevel()
+    label0 = Label(top_syc, text = "同步完成！").grid(row = 0, column = 0)
+    btnQuirSyc = Button(top_syc, text="关闭", command=top_syc.destroy).grid(row=1, column=0)
 
 label1 = Label(root, text = f"欢迎使用自动答题机！请选择以下模式进入：").grid(row = 0, column = 0)
 btn_start = Button(root, text="答题模式", command=lambda: start("答题")).grid(row=1, column=0)
 btn_start = Button(root, text="修改模式", command=lambda: start("修改")).grid(row=2, column=0)
 btn_start = Button(root, text="录入模式", command=lambda: add()).grid(row=3, column=0)
-btn_loc2clo = Button(root, text="同步本地到云端", command=lambda: sycup()).grid(row=3, column=0)
-btn_clo2loc = Button(root, text="同步云端到本地", command=lambda: sycdown()).grid(row=3, column=0)
-button_quit = Button(root, text="退出", command=root.quit).grid(row = 4, column = 0)
+btn_loc2clo = Button(root, text="同步本地到云端", command=lambda: sycup()).grid(row=4, column=0)
+btn_clo2loc = Button(root, text="同步云端到本地", command=lambda: sycdown()).grid(row=5, column=0)
+button_quit = Button(root, text="退出", command=root.quit).grid(row = 6, column = 0)
 mainloop()
