@@ -1,6 +1,7 @@
 import json
 from tkinter import *
 from tqdm import tqdm
+from bypy import ByPy
 
 def add_in(top_add):
     # with open("text.txt", 'r', encoding='UTF-8') as org, open("text_clean.txt", "w") as cleaned:
@@ -79,7 +80,7 @@ def add_in(top_add):
     f.close()
     top_add_succ = Toplevel()
     top_add_succ.title("录入成功")
-    label0 = Label(top_add_succ, text = f"批量录入完成！目前题库共有题{len(qa_dict_auto)}道!扫描到重复题目{num_repeted}道！").grid(row = 0, column = 0)
+    label0 = Label(top_add_succ, text = f"批量录入完成！目前题库共有题{len(qa_dict_auto)}道!扫描到重复题目{num_repeted}道!").grid(row = 0, column = 0)
     btn_quitAnswer = Button(top_add_succ, text="关闭", command=top_add_succ.destroy).grid(row=1, column=0)
     # # while line:
     # #     print(line)
