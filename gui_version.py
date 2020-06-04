@@ -4,6 +4,7 @@ import json, requests, webbrowser
 from bypy import ByPy
 
 root = Tk()
+root.title("自动答题机")
 
 def OpenUrl(url):
     webbrowser.open_new(url)
@@ -139,11 +140,80 @@ def sycdown():
     label0 = Label(top_syc, text = "同步完成！").grid(row = 0, column = 0)
     btnQuirSyc = Button(top_syc, text="关闭", command=top_syc.destroy).grid(row=1, column=0)
 
+def uploadAll():
+    bp=ByPy()
+    bp.upload(".")
+    top_syc = Toplevel()
+    label0 = Label(top_syc, text = "upload finished!").grid(row = 0, column = 0)
+    btnQuirSyc = Button(top_syc, text="exit", command=top_syc.destroy).grid(row=1, column=0)
+
+def intoDeveloperMode(top_developer, label0Text, password):
+    if password != "xwg19960124":
+        label0Text.set("密码错误，请重新输入:")
+        # top_developer.update_idletasks()
+    else:
+        top_developer.destroy()
+        top_developer = Toplevel()
+        top_developer.title("开发者模式")
+        btnUploadAll= Button(top_developer, text="upload all", command=lambda: uploadAll()).grid(row=0, column=0)
+        btnQuirSyc = Button(top_developer, text="exit", command=top_developer.destroy).grid(row=1, column=0)
+        # label0Text.set("已进入开发者模式，请选择要执行的操作")
+        # e.grid_remove()
+        # btn_input.grid_remove()
+
+def developer():
+    top_developer = Toplevel()
+    top_developer.title("开发者模式")
+    label0Text = StringVar()
+    label0Text.set("请输入开发者密钥:")
+    label0 = Label(top_developer, textvariable = label0Text).grid(row = 0, column = 0)
+    # label0Text.set("密码错误，请重新输入:")
+    e = Entry(top_developer, width=35, borderwidth=5)
+    e.grid(row=1, column=0, columnspan=3, padx=10, pady=10)
+    btn_input = Button(top_developer, text="确定", command=lambda: intoDeveloperMode(top_developer, label0Text, e.get())).grid(row=2, column=0)
+    btnQuirSyc = Button(top_developer, text="退出", command=top_developer.destroy).grid(row=3, column=0)
+    # bp=ByPy()
+    # bp.upload(".")
+
+def downloadAll(topCheckVersion, version_text, current_version_num):
+    bp=ByPy()
+    bp.download(".")
+    topCheckVersion.destroy()
+    topCheckVersion = Toplevel()
+    topCheckVersion.title("更新完成")
+    label0 = Label(topCheckVersion, text = "更新完成!").grid(row = 0, column = 0)
+    version_text.set(current_version_num)
+    btnQuirSyc = Button(topCheckVersion, text="退出", command=topCheckVersion.destroy).grid(row=1, column=0)
+
+def checkUpdate(current_version_num, version_text):
+    bp=ByPy()
+    bp.download("version.txt")
+    topCheckVersion = Toplevel()
+    topCheckVersion.title("检查更新")
+    newVersionNum = ""
+    with open("version.txt") as f:
+        newVersionNum = f.readline()
+    if int(newVersionNum) > int(current_version_num):
+        label0 = Label(topCheckVersion, text = f"开发者已发布新版本V{newVersionNum}, 请确认是否更新？").grid(row = 0, column = 1)
+        btn_input0 = Button(topCheckVersion, text="下载最新版本", command=lambda: downloadAll(topCheckVersion, version_text, current_version_num)).grid(row=1, column=0)
+        btn_input1 = Button(topCheckVersion, text="暂不更新", command=lambda: topCheckVersion.destroy).grid(row=1, column=0)
+
+
+
 label1 = Label(root, text = f"欢迎使用自动答题机！请选择以下模式进入：").grid(row = 0, column = 0)
 btn_start = Button(root, text="答题模式", command=lambda: start("答题")).grid(row=1, column=0)
 btn_start = Button(root, text="修改模式", command=lambda: start("修改")).grid(row=2, column=0)
 btn_start = Button(root, text="录入模式", command=lambda: add()).grid(row=3, column=0)
-btn_loc2clo = Button(root, text="同步本地到云端", command=lambda: sycup()).grid(row=4, column=0)
-btn_clo2loc = Button(root, text="同步云端到本地", command=lambda: sycdown()).grid(row=5, column=0)
-button_quit = Button(root, text="退出", command=root.quit).grid(row = 6, column = 0)
+btn_loc2clo = Button(root, text="同步本地到云端", command=lambda: sycup()).grid(row=5, column=0)
+btn_clo2loc = Button(root, text="同步云端到本地", command=lambda: sycdown()).grid(row=6, column=0)
+
+version = StringVar()
+with open ("version.txt") as f:
+    version_num = f.readline()
+    version.set("Version" + version_num)
+label_version = Label(root, textvariable = version, font = (None, 7)).place(relx=1.0, rely=1.0, anchor='se')
+
+btn_update = Button(root, text="检查更新", command=lambda: checkUpdate(version_num, version_text)).grid(row=7, column=0)
+btn_developer = Button(root, text="开发者模式", command=lambda: developer()).grid(row=4, column=0)
+button_quit = Button(root, text="退出", command=root.quit).grid(row = 8, column = 0)
 mainloop()
