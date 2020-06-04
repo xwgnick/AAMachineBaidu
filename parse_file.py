@@ -13,7 +13,7 @@ def add_in(top_add):
     #             cleaned.write(element)
 
     num_repeted = 0
-    with open("text.txt", encoding='UTF-8') as f:
+    with open("text.txt") as f:
         with open("qa_dict_auto_final.json") as f_qa_dict:
             content = f.readlines()
             qa_dict_auto = json.load(f_qa_dict)
