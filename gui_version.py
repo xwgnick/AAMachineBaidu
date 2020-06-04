@@ -65,8 +65,8 @@ def search_answer(content, qa_dict):
             
 
     else:
-        fakeua = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.84 Safari/537.36"}
-        searchPage = requests.get('https://www.baidu.com/s?wd=' + question, headers = fakeua)
+        fake_headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.84 Safari/537.36", "Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"}
+        searchPage = requests.get('https://www.baidu.com/s?wd=' + question, headers = fake_headers)
         labelBaiduAnswerFound = Label(top_answer, text = f"问题: “{question}”\n不在题库中，已为您百度，请点击“跳转”用浏览器查看结果")
         labelBaiduAnswerFound.grid(row = 0, column = 0)
         jumpBtn = Button(top_answer, text="跳转", command=lambda: OpenUrl(searchPage.url))
