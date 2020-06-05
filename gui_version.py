@@ -98,6 +98,9 @@ def SeachModifyAnswer(question, qa_dict):
 def clear_entry(e):
     e.delete(0, 'end')    
 
+def paste(content, e):
+    e.insert(0, content)
+
 def start(mode):
     top = Toplevel()
     top.title(mode + "模式")
@@ -113,7 +116,8 @@ def start(mode):
         else:
             btn_search = Button(top, text="搜索", command=lambda: SeachModifyAnswer(e.get(), qa_dict)).grid(row=3, column=0)
         
-        btn_clear = Button(top, text="清除", command=lambda: clear_entry(e)).grid(row = 2, column = 3)
+        btn_clear = Button(top, text="粘贴", command=lambda: paste(root.clipboard_get(), e)).grid(row = 2, column = 3)
+        btn_clear = Button(top, text="清除", command=lambda: clear_entry(e)).grid(row = 2, column = 4)
         btn_start = Button(top, text="关闭", command=top.destroy)
         btn_start.grid(row = 4, column = 0)
 
@@ -142,7 +146,10 @@ def sycdown():
 
 def uploadAll():
     bp=ByPy()
-    bp.upload(".")
+    bp.upload("gui_version.exe")
+    bp.upload("parse_file.py")
+    bp.upload("version.txt")
+    
     top_syc = Toplevel()
     label0 = Label(top_syc, text = "upload finished!").grid(row = 0, column = 0)
     btnQuirSyc = Button(top_syc, text="exit", command=top_syc.destroy).grid(row=1, column=0)
@@ -175,17 +182,11 @@ def developer():
     # bp=ByPy()
     # bp.upload(".")
 
-def downloadAll(topCheckVersion, version_text, current_version_num):
-    bp=ByPy()
-    bp.download(".")
-    topCheckVersion.destroy()
-    topCheckVersion = Toplevel()
-    topCheckVersion.title("更新完成")
-    label0 = Label(topCheckVersion, text = "更新完成!").grid(row = 0, column = 0)
-    version_text.set(current_version_num)
-    btnQuirSyc = Button(topCheckVersion, text="退出", command=topCheckVersion.destroy).grid(row=1, column=0)
+def checkUpdateContent(newVersionNum):
+    fileName = "V" + newVersionNum + "Readme.txt"
+    webbrowser.open(fileName)
 
-def checkUpdate(current_version_num, version_text):
+def checkUpdate(current_version_num, version_text, root):
     bp=ByPy()
     bp.download("version.txt")
     topCheckVersion = Toplevel()
@@ -193,10 +194,19 @@ def checkUpdate(current_version_num, version_text):
     newVersionNum = ""
     with open("version.txt") as f:
         newVersionNum = f.readline()
-    if int(newVersionNum) > int(current_version_num):
-        label0 = Label(topCheckVersion, text = f"开发者已发布新版本V{newVersionNum}, 请确认是否更新？").grid(row = 0, column = 1)
-        btn_input0 = Button(topCheckVersion, text="下载最新版本", command=lambda: downloadAll(topCheckVersion, version_text, current_version_num)).grid(row=1, column=0)
-        btn_input1 = Button(topCheckVersion, text="暂不更新", command=lambda: topCheckVersion.destroy).grid(row=1, column=0)
+    print("")
+    if float(newVersionNum) > float(current_version_num):
+        fileName = "V" + newVersionNum + "Readme.txt"
+        bp.download(fileName)
+        label0 = Label(topCheckVersion, text = f"开发者已发布新版本V{newVersionNum}, 请确认是否更新？若是，请退出当前程序并运行同目录下的更新.exe程序；若否，请选择暂不更新").grid(row = 0, column = 0)
+        btn_input2 = Button(topCheckVersion, text="查看更新内容", command=lambda: checkUpdateContent(newVersionNum)).grid(row=1, column=0)
+        btn_input1 = Button(topCheckVersion, text="退出当前程序", command=lambda: root.quit()).grid(row=3, column=0)
+        btn_input0 = Button(topCheckVersion, text="暂不更新", command=lambda: topCheckVersion.destroy()).grid(row=4, column=0)
+
+    else:
+        label0 = Label(topCheckVersion, text = "当前已经是最新版本").grid(row = 0, column = 0)
+        btn_input1 = Button(topCheckVersion, text="退出", command=lambda: topCheckVersion.destroy()).grid(row=1, column=0)
+
 
 
 
@@ -208,12 +218,12 @@ btn_loc2clo = Button(root, text="同步本地到云端", command=lambda: sycup()
 btn_clo2loc = Button(root, text="同步云端到本地", command=lambda: sycdown()).grid(row=6, column=0)
 
 version = StringVar()
-with open ("version.txt") as f:
+with open ("current_version.txt") as f:
     version_num = f.readline()
     version.set("Version" + version_num)
 label_version = Label(root, textvariable = version, font = (None, 7)).place(relx=1.0, rely=1.0, anchor='se')
 
-btn_update = Button(root, text="检查更新", command=lambda: checkUpdate(version_num, version_text)).grid(row=7, column=0)
+btn_update = Button(root, text="检查更新", command=lambda: checkUpdate(version_num, version, root)).grid(row=7, column=0)
 btn_developer = Button(root, text="开发者模式", command=lambda: developer()).grid(row=4, column=0)
 button_quit = Button(root, text="退出", command=root.quit).grid(row = 8, column = 0)
 mainloop()
